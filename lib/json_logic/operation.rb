@@ -2,20 +2,16 @@ module JSONLogic
   class Operation
     LAMBDAS = {
       'var' => ->(v, d) {
-        val, default = v
-        descend = val.to_s.split('.')
-        result = if d.is_a?(Hash)
-          d.dig(*descend)
-        elsif d.is_a?(Array)
-          descend.map!(&:to_i)
-          descend.each do |i|
-            d = d[i]
-          end
-          d
-        end
-        result || default
+        v, default = v
+        d.get(v) || default
       },
-      'missing' => ->(v, d) { v - d.keys },
+      'missing' => ->(v, d) {
+        result = []
+        v.each do |val|
+          result << val unless d.get(val)
+        end
+        result
+      },
       'missing_some' => ->(v, d) {
         present = v[1] & d.keys
         present.size >= v[0] ? [] : LAMBDAS['missing'].call(v[1], d)
@@ -23,17 +19,20 @@ module JSONLogic
       'if' => ->(v, d) {
         v.each_slice(2) do |condition, value|
           return condition if value.nil?
-          return value if condition
+          return value if condition.truthy?
         end
       },
-      '=='    => ->(v, d) { v[0] == v[1] },
+      '=='    => ->(v, d) { v[0].to_s == v[1].to_s },
       '==='   => ->(v, d) { v[0] === v[1] },
-      '!='    => ->(v, d) { v[0] != v[1] },
+      '!='    => ->(v, d) { v[0].to_s != v[1].to_s },
       '!=='   => ->(v, d) { v[0] != v[1] },
-      '!'     => ->(v, d) { !v[0] },
-      '!!'    => ->(v, d) { !!v[0] },
-      'or'    => ->(v, d) { v.reduce(false) { |a, e| a || e } },
-      'and'   => ->(v, d) { v.reduce(true) { |a, e| a && e } },
+      '!'     => ->(v, d) { !v[0].truthy? },
+      '!!'    => ->(v, d) { v[0].truthy? },
+      'or'    => ->(v, d) { v.find(&:truthy?) || v.last },
+      'and'   => ->(v, d) {
+        result = v.find(&:falsy?)
+        result.nil? ? v.last : result
+      },
       '?:'    => ->(v, d) { LAMBDAS['if'].call(v, d) },
       '>'     => ->(v, d) { v.map(&:to_i).each_cons(2).all? { |i, j| i > j } },
       '>='    => ->(v, d) { v.map(&:to_i).each_cons(2).all? { |i, j| i >= j } },
@@ -44,7 +43,7 @@ module JSONLogic
       '+'     => ->(v, d) { v.map(&:to_i).reduce(:+) },
       '-'     => ->(v, d) { v.map!(&:to_i); v.size == 1 ? -v.first : v.reduce(:-) },
       '*'     => ->(v, d) { v.map(&:to_i).reduce(:*) },
-      '/'     => ->(v, d) { v.map(&:to_i).reduce(:/) },
+      '/'     => ->(v, d) { v.map(&:to_f).reduce(:/) },
       '%'     => ->(v, d) { v.map(&:to_i).reduce(:%) },
       'merge' => ->(v, d) { v.flatten },
       'in'    => ->(v, d) { v[1].include? v[0] },

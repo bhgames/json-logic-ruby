@@ -7,7 +7,8 @@ require 'open-uri'
 require 'json_logic'
 
 class JSONLogicTest < Minitest::Test
-  tests = JSON.parse(open('http://jsonlogic.com/tests.json').read)
+  test_suite_url = 'http://jsonlogic.com/tests.json'
+  tests = JSON.parse(open(test_suite_url).read)
   count = 1
   tests.each do |pattern|
     next unless pattern.is_a?(Array)

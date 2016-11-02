@@ -1,4 +1,5 @@
-# http://jsonlogic.com/truthy.html
+# JsonLogic truthy / falsy logic
+# Cf. http://jsonlogic.com/truthy.html
 
 class Object
   def truthy?

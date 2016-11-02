@@ -1,8 +1,8 @@
 module JSONLogic
   class Operation
     LAMBDAS = {
-      'var' => ->(v, d) { d.get(*v) },
-      'missing' => ->(v, d) { v.select { |val| d.get(val).nil? } },
+      'var' => ->(v, d) { d.deep_fetch(*v) },
+      'missing' => ->(v, d) { v.select { |val| d.deep_fetch(val).nil? } },
       'missing_some' => ->(v, d) {
         present = v[1] & d.keys
         present.size >= v[0] ? [] : LAMBDAS['missing'].call(v[1], d)

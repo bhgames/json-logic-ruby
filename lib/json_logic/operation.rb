@@ -1,17 +1,8 @@
 module JSONLogic
   class Operation
     LAMBDAS = {
-      'var' => ->(v, d) {
-        v, default = v
-        d.get(v) || default
-      },
-      'missing' => ->(v, d) {
-        result = []
-        v.each do |val|
-          result << val unless d.get(val)
-        end
-        result
-      },
+      'var' => ->(v, d) { d.get(*v) },
+      'missing' => ->(v, d) { v.select { |val| d.get(val).nil? } },
       'missing_some' => ->(v, d) {
         present = v[1] & d.keys
         present.size >= v[0] ? [] : LAMBDAS['missing'].call(v[1], d)
@@ -23,7 +14,7 @@ module JSONLogic
         end
       },
       '=='    => ->(v, d) { v[0].to_s == v[1].to_s },
-      '==='   => ->(v, d) { v[0] === v[1] },
+      '==='   => ->(v, d) { v[0] == v[1] },
       '!='    => ->(v, d) { v[0].to_s != v[1].to_s },
       '!=='   => ->(v, d) { v[0] != v[1] },
       '!'     => ->(v, d) { !v[0].truthy? },

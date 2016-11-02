@@ -17,7 +17,7 @@ module JSONLogic
       '==='   => ->(v, d) { v[0] == v[1] },
       '!='    => ->(v, d) { v[0].to_s != v[1].to_s },
       '!=='   => ->(v, d) { v[0] != v[1] },
-      '!'     => ->(v, d) { !v[0].truthy? },
+      '!'     => ->(v, d) { v[0].falsy? },
       '!!'    => ->(v, d) { v[0].truthy? },
       'or'    => ->(v, d) { v.find(&:truthy?) || v.last },
       'and'   => ->(v, d) {

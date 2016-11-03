@@ -19,4 +19,10 @@ class JSONLogicTest < Minitest::Test
     end
     count += 1
   end
+
+  def test_filter
+    filter = JSON.parse(%Q|{">": [{"var": "id"}, 1]}|)
+    data = JSON.parse(%Q|[{"id": 1},{"id": 2}]|)
+    assert_equal([{'id' => 2}], JSONLogic.filter(filter, data))
+  end
 end

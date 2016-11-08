@@ -10,13 +10,15 @@ Gem::Specification.new do |spec|
   spec.email         = ['Kenneth.Geerts@gmail.com']
   spec.homepage      = 'http://jsonlogic.com'
   spec.summary       = 'Build complex rules, serialize them as JSON, and execute them in ruby'
-  spec.description   = 'See http://jsonlogic.com'
+  spec.description   = 'Build complex rules, serialize them as JSON, and execute them in ruby. See http://jsonlogic.com'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
   end
   spec.require_paths = ['lib']
+
+  spec.required_ruby_version = '>= 2.3'
 
   spec.add_development_dependency 'bundler',  '~> 1.13'
   spec.add_development_dependency 'rake',     '~> 10.0'

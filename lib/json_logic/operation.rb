@@ -45,5 +45,9 @@ module JSONLogic
     def self.perform(operator, values, data)
       LAMBDAS[operator].call(values, data)
     end
+
+    def self.is_standard?(operator)
+      LAMBDAS.keys.include?(operator)
+    end
   end
 end

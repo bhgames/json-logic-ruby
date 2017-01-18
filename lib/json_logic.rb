@@ -15,6 +15,12 @@ module JSONLogic
   def self.filter(logic, data)
     data.select { |d| apply(logic, d) }
   end
+
+  def self.add_operation(operator, function)
+    Operation.class.send(:define_method, operator) do |v, d|
+      function.call(v, d)
+    end
+  end
 end
 
 require 'json_logic/version'

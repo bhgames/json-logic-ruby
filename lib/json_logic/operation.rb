@@ -43,11 +43,18 @@ module JSONLogic
     }
 
     def self.perform(operator, values, data)
-      LAMBDAS[operator].call(values, data)
+      return LAMBDAS[operator].call(values, data) if is_standard?(operator)
+      send(operator, values, data)
     end
 
     def self.is_standard?(operator)
       LAMBDAS.keys.include?(operator)
+    end
+
+    def self.add_operation(operator, function)
+      self.class.send(:define_method, operator) do |v, d|
+        function.call(v, d)
+      end
     end
   end
 end

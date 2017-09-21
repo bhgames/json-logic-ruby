@@ -3,7 +3,7 @@ require 'json_logic/truthy'
 require 'json_logic/operation'
 
 module JSONLogic
-  def self.apply(logic, data)
+  def self.apply(logic, data = {})
     return logic unless logic.is_a?(Hash)                # pass-thru
     operator, values = logic.first                       # unwrap single-key hash
     values = [values] unless values.is_a?(Array)         # syntactic sugar

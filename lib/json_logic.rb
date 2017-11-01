@@ -1,15 +1,14 @@
 require 'core_ext/deep_fetch'
+require 'core_ext/stringify_keys'
 require 'json_logic/truthy'
 require 'json_logic/operation'
-
 module JSONLogic
   def self.apply(logic, data)
-    return logic unless logic.is_a?(Hash)                # pass-thru
-    operator, values = logic.first                       # unwrap single-key hash
-    values = [values] unless values.is_a?(Array)         # syntactic sugar
-    new_vals = values.map { |value| apply(value, data) } # recursion step
-    new_vals.flatten!(1) if new_vals.size == 1           # [['A']] => ['A']
-    Operation.perform(operator, new_vals, data || {})    # perform operation
+    return logic unless logic.is_a?(Hash)                  # pass-thru
+    data = data.stringify_keys if data.is_a?(Hash)         # Stringify keys to keep out problems with symbol/string mismatch
+    operator, values = logic.first                         # unwrap single-key hash
+    values = [values] unless values.is_a?(Array)           # syntactic sugar
+    Operation.perform(operator, values, data || {})
   end
 
   def self.filter(logic, data)

@@ -4,6 +4,10 @@ Build complex rules, serialize them as JSON, and execute them in ruby.
 
 **json-logic-ruby** is a ruby parser for [JsonLogic](http://jsonlogic.com). Other libraries are available for parsing this logic for Python and JavaScript at that link!
 
+## Installation
+
+`gem install json_logic`
+
 ## Why use JsonLogic?
 
 If you're looking for a way to share logic between front-end and back-end code, and even store it in a database, JsonLogic might be a fit for you.

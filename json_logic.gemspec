@@ -6,8 +6,8 @@ require 'json_logic/version'
 Gem::Specification.new do |spec|
   spec.name          = 'json_logic'
   spec.version       = JSONLogic::VERSION
-  spec.authors       = ['Kenneth Geerts']
-  spec.email         = ['Kenneth.Geerts@gmail.com']
+  spec.authors       = ['Kenneth Geerts', "Jordan Prince"]
+  spec.email         = ['Kenneth.Geerts@gmail.com', "jordanmprince@gmail.com"]
   spec.homepage      = 'http://jsonlogic.com'
   spec.summary       = 'Build complex rules, serialize them as JSON, and execute them in ruby'
   spec.description   = 'Build complex rules, serialize them as JSON, and execute them in ruby. See http://jsonlogic.com'

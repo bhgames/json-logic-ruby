@@ -2,7 +2,7 @@
 
 Build complex rules, serialize them as JSON, and execute them in ruby.
 
-**json-logic-ruby** is a ruby parser for [JsonLogic](http://jsonlogic.com).
+**json-logic-ruby** is a ruby parser for [JsonLogic](http://jsonlogic.com). Other libraries are available for parsing this logic for Python and JavaScript at that link!
 
 ## Why use JsonLogic?
 

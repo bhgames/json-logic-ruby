@@ -26,6 +26,12 @@ class JSONLogicTest < Minitest::Test
     assert_equal([{'id' => 2}], JSONLogic.filter(filter, data))
   end
 
+  def test_symbol_operation
+    logic = {'==': [{var: "id"}, 1]}
+    data = JSON.parse(%Q|{"id": 1}|)
+    assert_equal(true, JSONLogic.apply(logic, data))
+  end
+
   def test_add_operation
     new_operation = ->(v, d) { v.map { |x| x + 5 } }
     JSONLogic.add_operation('fives', new_operation)

@@ -118,13 +118,13 @@ module JSONLogic
     end
 
     def self.is_standard?(operator)
-      LAMBDAS.keys.include?(operator)
+      LAMBDAS.key?(operator.to_s)
     end
 
     # Determine if values associated with operator need to be re-interpreted for each iteration(ie some kind of iterator)
     # or if values can just be evaluated before passing in.
     def self.is_iterable?(operator)
-      ['filter', 'some', 'all', 'none', 'in', 'map', 'reduce'].any? { |o| o == operator }
+      ['filter', 'some', 'all', 'none', 'in', 'map', 'reduce'].include?(operator.to_s)
     end
 
     def self.add_operation(operator, function)

@@ -44,4 +44,19 @@ class JSONLogicTest < Minitest::Test
     data = JSON.parse(%Q|{"num": 1}|)
     assert_equal([6], JSONLogic.apply(rules, data))
   end
+
+  def test_array_with_logic
+    assert_equal [1, 2, 3], JSONLogic.apply([1, {"var" => "x"}, 3], {"x" => 2})
+
+    assert_equal [42], JSONLogic.apply(
+      {
+        "if" => [
+          {"var" => "x"},
+          [{"var" => "y"}],
+          99
+        ]
+      },
+      { "x" => true, "y" => 42}
+    )
+  end
 end

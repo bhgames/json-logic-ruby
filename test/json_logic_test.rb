@@ -15,7 +15,12 @@ class JSONLogicTest < Minitest::Test
     define_method("test_#{count}") do
       result = JSONLogic.apply(pattern[0], pattern[1])
       msg = "#{pattern[0].to_json} (data: #{pattern[1].to_json})"
-      assert_equal(pattern[2], result, msg)
+
+      if pattern[2].nil?
+        assert_nil(result, msg)
+      else
+        assert_equal(pattern[2], result, msg)
+      end
     end
     count += 1
   end

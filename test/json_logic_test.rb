@@ -45,6 +45,17 @@ class JSONLogicTest < Minitest::Test
     assert_equal([6], JSONLogic.apply(rules, data))
   end
 
+  def test_exponent_operation
+    exp = JSON.parse(%Q|{"^": [{"var": "num"}, 3]}|)
+    data1 = JSON.parse(%Q|{"num": 2}|)
+    data2 = JSON.parse(%Q|{"num": 3}|)
+    data3 = JSON.parse(%Q|{"num": 4}|)
+
+    assert_equal(8, JSONLogic.apply(exp, data1).to_i)
+    assert_equal(27, JSONLogic.apply(exp, data2).to_i)
+    assert_equal(64, JSONLogic.apply(exp, data3).to_i)
+  end
+
   def test_array_with_logic
     assert_equal [1, 2, 3], JSONLogic.apply([1, {"var" => "x"}, 3], {"x" => 2})
 

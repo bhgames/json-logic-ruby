@@ -35,6 +35,12 @@ class Integer
   end
 end
 
+class Float
+  def falsy?
+    zero?
+  end
+end
+
 class Array
   def falsy?
     empty?

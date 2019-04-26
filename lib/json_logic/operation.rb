@@ -92,7 +92,7 @@ module JSONLogic
       '%'     => ->(v, d) { v.map(&:to_i).reduce(:%) },
       '^'     => ->(v, d) { v.map(&:to_f).reduce(:**) },
       'merge' => ->(v, d) { v.flatten },
-      'in'    => ->(v, d) { v[1].include? v[0] },
+      'in'    => ->(v, d) { interpolated_block(v[1], d).include? v[0] },
       'cat'   => ->(v, d) { v.map(&:to_s).join },
       'log'   => ->(v, d) { puts v }
     }

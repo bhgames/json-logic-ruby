@@ -70,4 +70,16 @@ class JSONLogicTest < Minitest::Test
       { "x" => true, "y" => 42}
     )
   end
+
+  def test_in_with_variable
+    assert_equal true, JSONLogic.apply(
+      {
+        "in" => [
+          {"var" => "x"},
+          {"var" => "x"}
+        ]
+      },
+      { "x" => "foo"}
+    )
+  end
 end

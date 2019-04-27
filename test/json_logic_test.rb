@@ -81,5 +81,15 @@ class JSONLogicTest < Minitest::Test
       },
       { "x" => "foo"}
     )
+    
+    assert_equal false, JSONLogic.apply(
+      {
+        "in" => [
+          {"var" => "x"},
+          {"var" => "y"},
+        ]
+      },
+      { "x" => "foo", "y" => "bar" }
+    )
   end
 end

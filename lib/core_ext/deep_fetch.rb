@@ -1,3 +1,5 @@
+require 'backport_dig' if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.3')
+
 class Hash
   def deep_fetch(key, default = nil)
     keys = key.to_s.split('.')

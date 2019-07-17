@@ -37,6 +37,12 @@ class JSONLogicTest < Minitest::Test
     assert_equal(true, JSONLogic.apply(logic, data))
   end
 
+  def test_false_value
+    logic = {'==': [{var: "flag"}, false]}
+    data = JSON.parse(%Q|{"flag": false}|)
+    assert_equal(true, JSONLogic.apply(logic, data))
+  end
+
   def test_add_operation
     new_operation = ->(v, d) { v.map { |x| x + 5 } }
     JSONLogic.add_operation('fives', new_operation)

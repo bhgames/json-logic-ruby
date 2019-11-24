@@ -16,6 +16,22 @@ module JSONLogic
     Operation.perform(operator, values, data || {})
   end
 
+  def self.uses_data(logic)
+    collection = []
+
+    operator, values = logic.first
+    values = [values] unless values.is_a?(Array)
+    if operator == 'var'
+      collection.append(values[0])
+    else
+      values.each { |val|
+        collection.concat(uses_data(val))
+      }
+    end
+
+    return collection.uniq
+  end
+
   def self.filter(logic, data)
     data.select { |d| apply(logic, d) }
   end

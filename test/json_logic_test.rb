@@ -98,4 +98,37 @@ class JSONLogicTest < Minitest::Test
       { "x" => "foo", "y" => "bar" }
     )
   end
+
+  def test_uses_data
+    assert_equal ["x", "y"], JSONLogic.uses_data(
+      {
+        "in" => [
+          {"var" => "x"},
+          {"var" => "y"},
+        ]
+      }
+    )
+  end
+
+  def test_uses_data_missing
+    vars = JSONLogic.uses_data(
+      {
+        "in" => [
+          {"var" => "x"},
+          {"var" => "y"},
+        ]
+      }
+    )
+
+    provided_data_missing_y = {
+      x: 3,
+    }
+
+    provided_data_missing_x = {
+      y: 4,
+    }
+
+    assert_equal ["y"], JSONLogic.apply({"missing": [vars]}, provided_data_missing_y)
+    assert_equal ["x"], JSONLogic.apply({"missing": [vars]}, provided_data_missing_x)
+  end
 end

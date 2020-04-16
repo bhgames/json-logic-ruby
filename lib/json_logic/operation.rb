@@ -16,6 +16,8 @@ module JSONLogic
         end
       end,
       'filter' => -> (v,d) do
+        return [] unless v[0].is_a?(Array)
+
         v[0].select do |val|
           interpolated_block(v[1], val).truthy?
         end

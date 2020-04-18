@@ -22,7 +22,7 @@ module JSONLogic
     operator, values = logic.first
     values = [values] unless values.is_a?(Array)
     if operator == 'var'
-      collection.append(values[0])
+      collection << values[0]
     else
       values.each { |val|
         collection.concat(uses_data(val))

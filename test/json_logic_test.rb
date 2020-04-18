@@ -87,7 +87,7 @@ class JSONLogicTest < Minitest::Test
       },
       { "x" => "foo"}
     )
-    
+
     assert_equal false, JSONLogic.apply(
       {
         "in" => [
@@ -96,6 +96,18 @@ class JSONLogicTest < Minitest::Test
         ]
       },
       { "x" => "foo", "y" => "bar" }
+    )
+  end
+
+  def test_filter_with_non_array
+    assert_equal [], JSONLogic.apply(
+      {
+        "filter" => [
+          { "var" => "x" },
+          { "==": ["x", "y"] }
+        ]
+      },
+      nil
     )
   end
 

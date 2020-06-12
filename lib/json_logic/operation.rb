@@ -11,6 +11,8 @@ module JSONLogic
         present.size >= v[0] ? [] : LAMBDAS['missing'].call(v[1], d)
       },
       'some' => -> (v,d) do
+        return false unless v[0].is_a?(Array)
+
         v[0].any? do |val|
           interpolated_block(v[1], val).truthy?
         end

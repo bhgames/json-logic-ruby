@@ -1,9 +1,22 @@
 module JSONLogic
+  ITERABLE_KEY = "".freeze
+
   class Operation
     LAMBDAS = {
       'var' => ->(v, d) do
-        return d unless d.is_a?(Hash) or d.is_a?(Array)
-        return v == [""] ? (d.is_a?(Array) ? d : d[""]) : d.deep_fetch(*v)
+        if !(d.is_a?(Hash) || d.is_a?(Array))
+          d
+        else
+          if v == [JSONLogic::ITERABLE_KEY]
+            if d.is_a?(Array)
+              d
+            else
+              d[JSONLogic::ITERABLE_KEY]
+            end
+          else
+            d.deep_fetch(*v)
+          end
+        end
       end,
       'missing' => ->(v, d) { v.select { |val| d.deep_fetch(val).nil? } },
       'missing_some' => ->(v, d) {

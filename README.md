@@ -4,6 +4,22 @@ Build complex rules, serialize them as JSON, and execute them in ruby.
 
 **json-logic-ruby** is a ruby parser for [JsonLogic](http://jsonlogic.com). Other libraries are available for parsing this logic for Python and JavaScript at that link!
 
+## DANGER WILL ROBINSON!
+
+This Ruby version of [jwadhams/json-logic](https://github.com/jwadhams/json-logic)
+does not have the same functionality as the original Javascript version.  In
+particular, *method* is not implemented at all and *add_operation* can only define
+operations with **_exactly_** one parameter.  There are probably other deficiencies
+as well.
+
+This does not mean that JsonLogic is not useful... IMHO, it is.  However, the class of
+problems it can solve is a subset of the class of problems that 
+[jwadhams/json-logic](https://github.com/jwadhams/json-logic) can solve.
+
+Contributions of expertise, time and energy are welcome to correct these deficiencies
+and bring the Ruby version up to parity with the Javascript version.  Inquire within
+if you are interested.
+
 ## Installation
 
 `gem install json_logic`

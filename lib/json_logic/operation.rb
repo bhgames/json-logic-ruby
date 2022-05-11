@@ -114,6 +114,8 @@ module JSONLogic
       'log'   => ->(v, d) { puts v }
     }
 
+    CUSTOM_LAMBDAS = {}
+
     def self.interpolated_block(block, data)
       # Make sure the empty var is there to be used in iterator
       JSONLogic.apply(block, data.is_a?(Hash) ? data.merge({"": data}) : { "": data })
@@ -132,11 +134,16 @@ module JSONLogic
       interpolated.flatten!(1) if interpolated.size == 1           # [['A']] => ['A']
 
       return LAMBDAS[operator.to_s].call(interpolated, data) if is_standard?(operator)
-      send(operator, interpolated, data)
+      return CUSTOM_LAMBDAS[operator.to_s].call(interpolated, data) if is_custom?(operator)
+      raise ArgumentError, "Unknown operator #{operator}"
     end
 
     def self.is_standard?(operator)
       LAMBDAS.key?(operator.to_s)
+    end
+
+    def self.is_custom?(operator)
+      CUSTOM_LAMBDAS.key?(operator.to_s)
     end
 
     # Determine if values associated with operator need to be re-interpreted for each iteration(ie some kind of iterator)
@@ -146,9 +153,7 @@ module JSONLogic
     end
 
     def self.add_operation(operator, function)
-      self.class.send(:define_method, operator) do |v, d|
-        function.call(v, d)
-      end
+      CUSTOM_LAMBDAS[operator.to_s] = function
     end
   end
 end

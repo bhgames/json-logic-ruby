@@ -7,8 +7,13 @@ require 'open-uri'
 require 'json_logic'
 
 class JSONLogicTest < Minitest::Test
-  test_suite_url = 'http://jsonlogic.com/tests.json'
-  tests = JSON.parse(open(test_suite_url).read)
+  test_suite_url = 'https://jsonlogic.com/tests.json'
+  tests = begin
+    JSON.parse(open(test_suite_url).read)
+  rescue Errno::ENOENT
+    # Run a cached copy of the test suite if we can't reach the canonical version
+    JSON.parse(File.read(File.join(File.dirname(__FILE__), 'tests.json')))
+  end
   count = 1
   tests.each do |pattern|
     next unless pattern.is_a?(Array)
@@ -44,10 +49,13 @@ class JSONLogicTest < Minitest::Test
   end
 
   def test_add_operation
-    new_operation = ->(v, d) { v.map { |x| x + 5 } }
-    JSONLogic.add_operation('fives', new_operation)
     rules = JSON.parse(%Q|{"fives": {"var": "num"}}|)
     data = JSON.parse(%Q|{"num": 1}|)
+    assert_raises(ArgumentError, "Unknown operator fives") do
+      JSONLogic.apply(rules, data)
+    end
+    new_operation = ->(v, d) { v.map { |x| x + 5 } }
+    JSONLogic.add_operation('fives', new_operation)
     assert_equal([6], JSONLogic.apply(rules, data))
   end
 

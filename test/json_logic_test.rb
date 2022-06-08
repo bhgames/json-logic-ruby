@@ -120,6 +120,15 @@ class JSONLogicTest < Minitest::Test
         ]
       }
     )
+
+    assert_equal ["a", "b", "c"], JSONLogic.uses_data(
+      {
+        "all" => [
+          { "var"=> "a" },
+          { "var"=> ["b", "c"] },
+        ]
+      }
+    )
   end
 
   def test_uses_data_missing

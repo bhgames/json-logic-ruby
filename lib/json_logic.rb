@@ -32,7 +32,7 @@ module JSONLogic
 
       if operator == 'var' # TODO: It may be that non-var operators use data so we may want a flag or collection that indicates data use.
         if values[0] != JSONLogic::ITERABLE_KEY
-          collection << values[0]
+          collection |= values
         end
       else
         values.each do |val|

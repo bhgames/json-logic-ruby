@@ -8,21 +8,17 @@ module JSONLogic
           d
         else
           if v == [JSONLogic::ITERABLE_KEY]
-            if d.is_a?(Array)
-              d
-            else
-              d[JSONLogic::ITERABLE_KEY]
-            end
+            d.is_a?(Array) ? d : d[JSONLogic::ITERABLE_KEY]
           else
             d.deep_fetch(*v)
           end
         end
       end,
       'missing' => ->(v, d) { v.select { |val| d.deep_fetch(val).nil? } },
-      'missing_some' => ->(v, d) {
+      'missing_some' => ->(v, d) do
         present = v[1] & d.keys
         present.size >= v[0] ? [] : LAMBDAS['missing'].call(v[1], d)
-      },
+      end,
       'some' => -> (v,d) do
         return false unless v[0].is_a?(Array)
 
@@ -38,27 +34,14 @@ module JSONLogic
         end
       end,
       'substr' => -> (v,d) do
-        limit = -1
-        if v[2]
-          if v[2] < 0
-            limit = v[2] - 1
-          else
-            limit = v[1] + v[2] - 1
-          end
-        end
+        return v[0][v[1]..-1] unless v[2]
 
-         v[0][v[1]..limit]
+        limit = v[2] < 0 ? v[2] - 1 : v[1] + v[2] - 1
+
+        v[0][v[1]..limit]
       end,
       'none' => -> (v,d) do
-
-        v[0].each do |val|
-          this_val_satisfies_condition = interpolated_block(v[1], val)
-          if this_val_satisfies_condition
-            return false
-          end
-        end
-
-        return true
+        v[0].none? { |val| interpolated_block(v[1], val) }
       end,
       'all' => -> (v,d) do
         # Difference between Ruby and JSONLogic spec ruby all? with empty array is true
@@ -70,20 +53,24 @@ module JSONLogic
       end,
       'reduce' => -> (v,d) do
         return v[2] unless v[0].is_a?(Array)
-        v[0].inject(v[2]) { |acc, val| interpolated_block(v[1], { "current": val, "accumulator": acc })}
+
+        v[0].inject(v[2]) do |acc, val|
+          interpolated_block(v[1], { "current": val, "accumulator": acc })
+        end
       end,
       'map' => -> (v,d) do
         return [] unless v[0].is_a?(Array)
+
         v[0].map do |val|
           interpolated_block(v[1], val)
         end
       end,
-      'if' => ->(v, d) {
+      'if' => ->(v, d) do
         v.each_slice(2) do |condition, value|
           return condition if value.nil?
           return value if condition.truthy?
         end
-      },
+      end,
       '=='    => ->(v, d) { v[0].to_s == v[1].to_s },
       '==='   => ->(v, d) { v[0] == v[1] },
       '!='    => ->(v, d) { v[0].to_s != v[1].to_s },
@@ -91,10 +78,10 @@ module JSONLogic
       '!'     => ->(v, d) { v[0].falsy? },
       '!!'    => ->(v, d) { v[0].truthy? },
       'or'    => ->(v, d) { v.find(&:truthy?) || v.last },
-      'and'   => ->(v, d) {
+      'and'   => ->(v, d) do
         result = v.find(&:falsy?)
         result.nil? ? v.last : result
-      },
+      end,
       '?:'    => ->(v, d) { LAMBDAS['if'].call(v, d) },
       '>'     => ->(v, d) { v.map(&:to_f).each_cons(2).all? { |i, j| i > j } },
       '>='    => ->(v, d) { v.map(&:to_f).each_cons(2).all? { |i, j| i >= j } },
@@ -123,10 +110,10 @@ module JSONLogic
       # If iterable, we can only pre-fill the first element, the second one must be evaluated per element.
       # If not, we can prefill all.
 
-      if is_iterable?(operator)
-        interpolated = [JSONLogic.apply(values[0], data), *values[1..-1]]
+      interpolated =  if is_iterable?(operator)
+        [JSONLogic.apply(values[0], data), *values[1..-1]]
       else
-        interpolated = values.map { |val| JSONLogic.apply(val, data) }
+        values.map { |val| JSONLogic.apply(val, data) }
       end
 
       interpolated.flatten!(1) if interpolated.size == 1           # [['A']] => ['A']

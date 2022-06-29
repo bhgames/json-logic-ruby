@@ -142,4 +142,11 @@ class JSONLogicTest < Minitest::Test
     assert_equal ["y"], JSONLogic.apply({ "missing": [vars] }, provided_data_missing_y)
     assert_equal ["x"], JSONLogic.apply({ "missing": [vars] }, provided_data_missing_x)
   end
+
+  def test_in_with_non_array
+    logic = { "in" => ["searchable_elem", { "var" => "non_array" }] }
+
+    refute JSONLogic.apply(logic, { "non_array" => nil })
+    refute JSONLogic.apply(logic, nil)
+  end
 end

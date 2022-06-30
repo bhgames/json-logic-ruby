@@ -61,9 +61,7 @@ module JSONLogic
   end
 
   def self.add_operation(operator, function)
-    Operation.class.send(:define_method, operator) do |v, d|
-      function.call(v, d)
-    end
+    Operation.add_operation(operator, function)
   end
 end
 

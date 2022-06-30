@@ -107,6 +107,18 @@ class JSONLogicTest < Minitest::Test
     )
   end
 
+  def test_in_with_null
+    assert_equal false, JSONLogic.apply(
+      {
+        "in" => [
+          {"var" => "x"},
+          {"var" => "y"},
+        ]
+      },
+      { "x" => "foo", "y" => nil }
+    )
+  end
+
   def test_filter_with_non_array
     assert_equal [], JSONLogic.apply(
       {

@@ -12,7 +12,7 @@ module JSONLogic
       # Pass-thru
       logic
     else
-      if data.is_a?(Hash)
+      if data.is_a?(Hash) && data.keys.any?(Symbol)
         data = data.stringify_keys
       end
       data ||= {}

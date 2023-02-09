@@ -28,19 +28,22 @@ class JSONLogicTest < Minitest::Test
   def test_filter
     filter = JSON.parse(%Q|{">": [{"var": "id"}, 1]}|)
     data = JSON.parse(%Q|[{"id": 1},{"id": 2}]|)
-    assert_equal([{'id' => 2}], JSONLogic.filter(filter, data))
+
+    assert_equal([{ 'id' => 2 }], JSONLogic.filter(filter, data))
   end
 
   def test_symbol_operation
-    logic = {'==': [{var: "id"}, 1]}
+    logic = {'==': [{ var: "id" }, 1]}
     data = JSON.parse(%Q|{"id": 1}|)
-    assert_equal(true, JSONLogic.apply(logic, data))
+
+    assert JSONLogic.apply(logic, data)
   end
 
   def test_false_value
-    logic = {'==': [{var: "flag"}, false]}
+    logic = { '==': [{ var: "flag" }, false] }
     data = JSON.parse(%Q|{"flag": false}|)
-    assert_equal(true, JSONLogic.apply(logic, data))
+
+    assert JSONLogic.apply(logic, data)
   end
 
   def test_add_operation
@@ -48,6 +51,7 @@ class JSONLogicTest < Minitest::Test
     JSONLogic.add_operation('fives', new_operation)
     rules = JSON.parse(%Q|{"fives": {"var": "num"}}|)
     data = JSON.parse(%Q|{"num": 1}|)
+
     assert_equal([6], JSONLogic.apply(rules, data))
   end
 
@@ -63,36 +67,36 @@ class JSONLogicTest < Minitest::Test
   end
 
   def test_array_with_logic
-    assert_equal [1, 2, 3], JSONLogic.apply([1, {"var" => "x"}, 3], {"x" => 2})
+    assert_equal [1, 2, 3], JSONLogic.apply([1, { "var" => "x" }, 3], { "x" => 2 })
 
     assert_equal [42], JSONLogic.apply(
       {
         "if" => [
-          {"var" => "x"},
-          [{"var" => "y"}],
+          { "var" => "x" },
+          [{ "var" => "y" }],
           99
         ]
       },
-      { "x" => true, "y" => 42}
+      { "x" => true, "y" => 42 }
     )
   end
 
   def test_in_with_variable
-    assert_equal true, JSONLogic.apply(
+    assert JSONLogic.apply(
       {
         "in" => [
-          {"var" => "x"},
-          {"var" => "x"}
+          { "var" => "x" },
+          { "var" => "x" }
         ]
       },
-      { "x" => "foo"}
+      { "x" => "foo" }
     )
 
-    assert_equal false, JSONLogic.apply(
+    refute JSONLogic.apply(
       {
         "in" => [
-          {"var" => "x"},
-          {"var" => "y"},
+          { "var" => "x" },
+          { "var" => "y" }
         ]
       },
       { "x" => "foo", "y" => "bar" }
@@ -100,7 +104,7 @@ class JSONLogicTest < Minitest::Test
   end
 
   def test_filter_with_non_array
-    assert_equal [], JSONLogic.apply(
+    assert_empty JSONLogic.apply(
       {
         "filter" => [
           { "var" => "x" },
@@ -115,8 +119,8 @@ class JSONLogicTest < Minitest::Test
     assert_equal ["x", "y"], JSONLogic.uses_data(
       {
         "in" => [
-          {"var" => "x"},
-          {"var" => "y"},
+          { "var" => "x" },
+          { "var" => "y" }
         ]
       }
     )
@@ -126,21 +130,16 @@ class JSONLogicTest < Minitest::Test
     vars = JSONLogic.uses_data(
       {
         "in" => [
-          {"var" => "x"},
-          {"var" => "y"},
+          { "var" => "x" },
+          { "var" => "y" }
         ]
       }
     )
 
-    provided_data_missing_y = {
-      x: 3,
-    }
+    provided_data_missing_y = { x: 3 }
+    provided_data_missing_x = { y: 4 }
 
-    provided_data_missing_x = {
-      y: 4,
-    }
-
-    assert_equal ["y"], JSONLogic.apply({"missing": [vars]}, provided_data_missing_y)
-    assert_equal ["x"], JSONLogic.apply({"missing": [vars]}, provided_data_missing_x)
+    assert_equal ["y"], JSONLogic.apply({ "missing": [vars] }, provided_data_missing_y)
+    assert_equal ["x"], JSONLogic.apply({ "missing": [vars] }, provided_data_missing_x)
   end
 end

@@ -5,16 +5,12 @@ require 'json_logic/operation'
 module JSONLogic
   def self.apply(logic, data)
     if logic.is_a?(Array)
-      logic.map do |val|
-        apply(val, data)
-      end
+      logic.map { |val| apply(val, data) }
     elsif !logic.is_a?(Hash)
       # Pass-thru
       logic
     else
-      if data.is_a?(Hash)
-        data = data.stringify_keys
-      end
+      data = data.stringify_keys if data.is_a?(Hash)
       data ||= {}
 
       operator, values = operator_and_values_from_logic(logic)

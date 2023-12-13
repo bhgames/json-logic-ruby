@@ -100,10 +100,46 @@ module JSONLogic
       '>='    => ->(v, d) { v.map(&:to_f).each_cons(2).all? { |i, j| i >= j } },
       '<'     => ->(v, d) { v.map(&:to_f).each_cons(2).all? { |i, j| i < j } },
       '<='    => ->(v, d) { v.map(&:to_f).each_cons(2).all? { |i, j| i <= j } },
-      'date>'     => ->(v, d) { v.map{|current| Date.parse(current) }.each_cons(2).all? { |i, j| i > j } },
-      'date>='    => ->(v, d) { v.map{|current| Date.parse(current) }.each_cons(2).all? { |i, j| i >= j } },
-      'date<'     => ->(v, d) { v.map{|current| Date.parse(current) }.each_cons(2).all? { |i, j| i < j } },
-      'date<='    => ->(v, d) { v.map{|current| Date.parse(current) }.each_cons(2).all? { |i, j| i <= j } },
+      'date>'     => ->(v, d) { v.map do |current| 
+                                  begin
+                                    Date.parse(current)
+                                  rescue Date::Error
+                                    # If the date is not in the format of dd/mm/yy, try to parse it as mm/dd/yyyy
+                                    Date::strptime(current,'%m/%d/%y')
+                                  end
+                                end.each_cons(2).all? { |i, j| i > j } },
+      'date>='    => ->(v, d) { v.map do |current| 
+                                  begin
+                                    Date.parse(current)
+                                  rescue Date::Error
+                                    # If the date is not in the format of dd/mm/yy, try to parse it as mm/dd/yyyy
+                                    Date::strptime(current,'%m/%d/%y')
+                                  end
+                                end.each_cons(2).all? { |i, j| i >= j } },
+      'date<'     => ->(v, d) { v.map do |current|
+                                  begin
+                                    Date.parse(current)
+                                  rescue Date::Error
+                                    # If the date is not in the format of dd/mm/yy, try to parse it as mm/dd/yyyy
+                                    Date::strptime(current,'%m/%d/%y')
+                                  end
+                                end.each_cons(2).all? { |i, j| i < j } },
+      'date<='    => ->(v, d) { v.map do |current|
+                                  begin
+                                    Date.parse(current)
+                                  rescue Date::Error
+                                    # If the date is not in the format of dd/mm/yy, try to parse it as mm/dd/yyyy
+                                    Date::strptime(current,'%m/%d/%y')
+                                  end
+                                end.each_cons(2).all? { |i, j| i <= j } },
+      'date='    => ->(v, d) { v.map do |current|
+                                  begin
+                                    Date.parse(current)
+                                  rescue Date::Error
+                                    # If the date is not in the format of dd/mm/yy, try to parse it as mm/dd/yyyy
+                                    Date::strptime(current,'%m/%d/%y')
+                                  end
+                                end.each_cons(2).all? { |i, j| i == j } },
       'max'   => ->(v, d) { v.map(&:to_f).max },
       'min'   => ->(v, d) { v.map(&:to_f).min },
       '+'     => ->(v, d) { v.map(&:to_f).reduce(:+) },

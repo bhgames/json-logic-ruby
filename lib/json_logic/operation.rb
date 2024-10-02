@@ -79,10 +79,16 @@ module JSONLogic
         end
       end,
       'if' => ->(v, d) {
-        v.each_slice(2) do |condition, value|
-          return condition if value.nil?
-          return value if condition.truthy?
+        v.each_slice(2) do |condition_and_value|
+          # If this slice a single value? It's an else value only.
+          if condition_and_value.size == 1
+            return condition_and_value.first
+          else
+            condition, value = condition_and_value
+            return value if condition.truthy?
+          end
         end
+        nil
       },
       '=='    => ->(v, d) { v[0].to_s == v[1].to_s },
       '==='   => ->(v, d) { v[0] == v[1] },

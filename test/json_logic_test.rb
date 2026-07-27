@@ -111,6 +111,15 @@ class JSONLogicTest < Minitest::Test
     )
   end
 
+  def test_transform_keys_mapping_hash_preserved
+    skip "native transform_keys mapping form requires Ruby >= 3.0" if RUBY_VERSION < "3.0"
+    assert_equal({ b: 1 }, { a: 1 }.transform_keys(a: :b))
+  end
+
+  def test_stringify_keys_still_works
+    assert_equal({ "a" => 1, "b" => 2 }, { a: 1, b: 2 }.stringify_keys)
+  end
+
   def test_uses_data
     assert_equal ["x", "y"], JSONLogic.uses_data(
       {

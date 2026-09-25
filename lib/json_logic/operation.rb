@@ -41,14 +41,14 @@ module JSONLogic
         v[0][v[1]..limit]
       end,
       'none' => -> (v,d) do
-        v[0].none? { |val| interpolated_block(v[1], val) }
+        v[0].none? { |val| interpolated_block(v[1], val).truthy? }
       end,
       'all' => -> (v,d) do
         # Difference between Ruby and JSONLogic spec ruby all? with empty array is true
         return false if v[0].empty?
 
         v[0].all? do |val|
-          interpolated_block(v[1], val)
+          interpolated_block(v[1], val).truthy?
         end
       end,
       'reduce' => -> (v,d) do

@@ -159,6 +159,17 @@ class JSONLogicTest < Minitest::Test
     )
   end
 
+  def test_all_uses_jsonlogic_truthiness
+    refute JSONLogic.apply({ "all" => [[1, 0, 2], { "var" => "" }] }, {})
+    refute JSONLogic.apply({ "all" => [[""], { "var" => "" }] }, {})
+    assert JSONLogic.apply({ "all" => [[1, 2, 3], { "var" => "" }] }, {})
+  end
+
+  def test_none_uses_jsonlogic_truthiness
+    assert JSONLogic.apply({ "none" => [[0, ""], { "var" => "" }] }, {})
+    refute JSONLogic.apply({ "none" => [[0, "present"], { "var" => "" }] }, {})
+  end
+
   def test_uses_data
     assert_equal ["x", "y"], JSONLogic.uses_data(
       {

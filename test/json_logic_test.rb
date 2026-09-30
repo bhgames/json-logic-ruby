@@ -147,6 +147,27 @@ class JSONLogicTest < Minitest::Test
     )
   end
 
+  def test_var_path_through_single_element_array
+    data = { "statementOfValues" => [{ "streetAddress" => "38 South Main" }] }
+
+    assert_equal(
+      "38 South Main",
+      JSONLogic.apply({ "var" => "statementOfValues.streetAddress" }, data)
+    )
+  end
+
+  def test_var_path_through_multi_element_array_is_ambiguous
+    data = { "statementOfValues" => [{ "streetAddress" => "a" }, { "streetAddress" => "b" }] }
+
+    assert_nil JSONLogic.apply({ "var" => "statementOfValues.streetAddress" }, data)
+  end
+
+  def test_var_path_numeric_index_still_addresses_array_element
+    data = { "items" => [10, 20, 30] }
+
+    assert_equal(20, JSONLogic.apply({ "var" => "items.1" }, data))
+  end
+
   def test_filter_with_non_array
     assert_empty JSONLogic.apply(
       {

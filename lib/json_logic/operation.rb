@@ -34,11 +34,22 @@ module JSONLogic
         end
       end,
       'substr' => -> (v,d) do
-        return v[0][v[1]..-1] unless v[2]
+        # Same as String.prototype.substr in json-logic-js
+        str = v[0].to_s
+        start = v[1].to_i
+        start = [str.length + start, 0].max if start < 0
+        return '' if start >= str.length
 
-        limit = v[2] < 0 ? v[2] - 1 : v[1] + v[2] - 1
+        finish =
+          if v[2].nil?
+            str.length
+          elsif v[2].to_i < 0
+            str.length + v[2].to_i
+          else
+            [start + v[2].to_i, str.length].min
+          end
 
-        v[0][v[1]..limit]
+        finish > start ? str[start...finish] : ''
       end,
       'none' => -> (v,d) do
         v[0].none? { |val| interpolated_block(v[1], val) }
@@ -100,7 +111,8 @@ module JSONLogic
       '-'     => ->(v, d) { v.map!(&:to_f); v.size == 1 ? -v.first : v.reduce(:-) },
       '*'     => ->(v, d) { v.map(&:to_f).reduce(:*) },
       '/'     => ->(v, d) { v.map(&:to_f).reduce(:/) },
-      '%'     => ->(v, d) { v.map(&:to_i).reduce(:%) },
+      # remainder keeps the sign of the dividend, like JavaScript's %
+      '%'     => ->(v, d) { v.map(&:to_i).reduce { |a, b| a.remainder(b) } },
       '^'     => ->(v, d) { v.map(&:to_f).reduce(:**) },
       'merge' => ->(v, d) { v.flatten },
       'in'    => ->(v, d)  do

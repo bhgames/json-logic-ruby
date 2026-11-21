@@ -209,4 +209,28 @@ class JSONLogicTest < Minitest::Test
     refute JSONLogic.apply(logic, { "non_array" => nil })
     refute JSONLogic.apply(logic, nil)
   end
+
+  def test_substr_out_of_range_matches_javascript
+    # Expected values are String.prototype.substr results (json-logic-js)
+    {
+      ["jsonlogic", 10] => "",
+      ["jsonlogic", 10, 2] => "",
+      ["jsonlogic", -10] => "jsonlogic",
+      ["jsonlogic", -10, 2] => "js",
+      ["jsonlogic", 0, 0] => "",
+      ["jsonlogic", 0, 20] => "jsonlogic",
+      ["jsonlogic", 0, -10] => "",
+      ["", 5] => "",
+      ["jsonlogic", 4, -2] => "log"
+    }.each do |args, expected|
+      assert_equal expected, JSONLogic.apply({ "substr" => args }, {}), "substr #{args.inspect}"
+    end
+  end
+
+  def test_modulo_keeps_sign_of_dividend
+    assert_equal(-1, JSONLogic.apply({ "%" => [-7, 3] }, {}))
+    assert_equal(1, JSONLogic.apply({ "%" => [7, -3] }, {}))
+    assert_equal(1, JSONLogic.apply({ "%" => [7, 3] }, {}))
+    assert_equal(0, JSONLogic.apply({ "%" => [-6, 3] }, {}))
+  end
 end
